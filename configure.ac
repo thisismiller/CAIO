@@ -15,5 +15,8 @@ AC_CONFIG_FILES(
   Makefile
   src/Makefile
 )
+AC_CONFIG_SUBDIRS(
+  coroutine
+)
 
 AC_OUTPUT
