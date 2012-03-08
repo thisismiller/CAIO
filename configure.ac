@@ -8,12 +8,14 @@ AC_LANG([C++])
 AC_PROG_CC
 AC_PROG_CXX
 
-CFLAGS="-O0 -g -Wall -std=c99"
-CXXFLAGS="-O0 -g -Wall -std=gnu++0x"
+TOPLEVEL=$(pwd)
+CFLAGS="-O0 -g -Wall -std=c99 -isystem $TOPLEVEL/coroutine/source -I $TOPLEVEL/src"
+CXXFLAGS="-O0 -g -Wall -std=gnu++0x -isystem $TOPLEVEL/coroutine/source -I $TOPLEVEL/src"
 
 AC_CONFIG_FILES(
   Makefile
   src/Makefile
+  demo/Makefile
 )
 AC_CONFIG_SUBDIRS(
   coroutine
