@@ -1,12 +1,12 @@
-#ifndef _LIBAIO_AIO_HPP_
-#define _LIBAIO_AIO_HPP_
+#ifndef _LIBCAIO_CAIO_HPP_
+#define _LIBCAIO_CAIO_HPP_
 
 #include <unistd.h>
 
 #ifdef __cplusplus
 #include <functional>
 
-namespace AIO {
+namespace CAIO {
 
 void Spawn(std::function<void()> func);
 void Yield();
@@ -22,14 +22,15 @@ ssize_t Write(int fd, const void *buf, size_t count);
 extern "C" {
 #endif
 
-void AIO_Spawn(void (*func)(void*), void* context);
-void AIO_Yield();
-void AIO_RunIOLoop();
-ssize_t AIO_Read(int fd, void* buf, size_t count);
-ssize_t AIO_Write(int fd, const void* buf, size_t count);
+void CAIO_Spawn(void (*func)(void*), void* context);
+void CAIO_Yield();
+void CAIO_RunIOLoop();
+
+ssize_t CAIO_Read(int fd, void* buf, size_t count);
+ssize_t CAIO_Write(int fd, const void* buf, size_t count);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* _LIBAIO_AIO_HPP_ */
+#endif  /* _LIBCAIO_CAIO_HPP_ */

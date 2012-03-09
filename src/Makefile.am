@@ -1,6 +1,6 @@
 bin_PROGRAMS =
-lib_LTLIBRARIES = libaio.la
-include_HEADERS = aio.h
+lib_LTLIBRARIES = libcaio.la
+include_HEADERS = caio.h
 
-libaio_la_SOURCES = aio.h aio.cpp event.hpp
-libaio_la_LIBADD = ../coroutine/source/libcoroutine.la -lev
+libcaio_la_SOURCES = caio.h caio.cpp event.hpp
+libcaio_la_LIBADD = ../coroutine/source/libcoroutine.la -lev

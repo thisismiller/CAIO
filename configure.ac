@@ -1,4 +1,4 @@
-AC_INIT(AIO, 1.0, millerdevel@gmail.com)
+AC_INIT(CAIO, 1.0, millerdevel@gmail.com)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES([yes])

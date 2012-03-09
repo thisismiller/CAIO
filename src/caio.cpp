@@ -1,4 +1,4 @@
-#include "aio.h"
+#include "caio.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -12,11 +12,11 @@ namespace {
 void DeleteMeAtExit(std::function<void()> func) {
   func();
   delete &Coroutine::Running();
-  AIO::Yield();
+  CAIO::Yield();
 }
 }
 
-namespace AIO {
+namespace CAIO {
 
 void Spawn(std::function<void()> func) {
   Coroutine::SetScheduler(Coroutine::Main());
@@ -78,24 +78,24 @@ ssize_t Write(int fd, const void *buf, size_t count) {
   return written;
 }
 
-}  /* AIO */
+}  /* CAIO */
 
-void AIO_Spawn(void (*func)(void*), void* context) {
-  AIO::Spawn(std::bind(func,context));
+void CAIO_Spawn(void (*func)(void*), void* context) {
+  CAIO::Spawn(std::bind(func,context));
 }
 
-void AIO_Yield() {
-  AIO::Yield();
+void CAIO_Yield() {
+  CAIO::Yield();
 }
 
-void AIO_RunIOLoop() {
-  AIO::RunIOLoop();
+void CAIO_RunIOLoop() {
+  CAIO::RunIOLoop();
 }
 
-ssize_t AIO_Read(int fd, void* buf, size_t count) {
-  return AIO::Read(fd, buf, count);
+ssize_t CAIO_Read(int fd, void* buf, size_t count) {
+  return CAIO::Read(fd, buf, count);
 }
 
-ssize_t AIO_Write(int fd, const void *buf, size_t count) {
-  return AIO::Write(fd, buf, count);
+ssize_t CAIO_Write(int fd, const void *buf, size_t count) {
+  return CAIO::Write(fd, buf, count);
 }

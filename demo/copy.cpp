@@ -1,4 +1,4 @@
-#include "aio.h"
+#include "caio.h"
 #include <stdio.h>
 #include <functional>
 #include <errno.h>
@@ -14,9 +14,9 @@ void DoIO(int fd_in, int fd_out) {
   ssize_t read;
 
   do {
-    read = AIO::Read(fd_in, buf, 256);
+    read = CAIO::Read(fd_in, buf, 256);
     if (read != -1) {
-      AIO::Write(fd_out, buf, read);
+      CAIO::Write(fd_out, buf, read);
     } else {
       printf("Error: %s\n", strerror(errno));
     }
@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
   int in = open(argv[1], O_NONBLOCK|O_RDONLY);
   int out = open(argv[2], O_NONBLOCK|O_WRONLY|O_TRUNC|O_CREAT, 0751);
 
-  AIO::Spawn(bind(DoIO, in, out));
-  AIO::RunIOLoop();
+  CAIO::Spawn(bind(DoIO, in, out));
+  CAIO::RunIOLoop();
 
   close(in);
   close(out);
