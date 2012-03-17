@@ -46,7 +46,7 @@ ssize_t Read(int fd, void* buf, size_t count) {
     } else if (received == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
-      Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Event::ReadEvent event(fd, bind(&Coroutine::run, &Coroutine::Running()));
       Yield();
     }
   } while (true);
@@ -83,7 +83,7 @@ ssize_t Write(int fd, const void *buf, size_t count) {
     } else if (written == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
-      Event::WriteEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Event::WriteEvent event(fd, bind(&Coroutine::run, &Coroutine::Running()));
       Yield();
     }
   } while (true);
@@ -120,7 +120,7 @@ ssize_t Recv(int fd, void *buf, size_t len, int flags) {
     } else if (added == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
-      Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Event::ReadEvent event(fd, bind(&Coroutine::run, &Coroutine::Running()));
       Yield();
     }
   } while (true);
@@ -157,7 +157,7 @@ ssize_t Send(int fd, const void* buf, size_t len, int flags) {
     } else if (wrote == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
-      Event::WriteEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Event::WriteEvent event(fd, bind(&Coroutine::run, &Coroutine::Running()));
       Yield();
     }
   } while (true);
@@ -212,7 +212,7 @@ int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
     } else if (sock == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
-      Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Event::ReadEvent event(fd, bind(&Coroutine::run, &Coroutine::Running()));
       Yield();
     }
   }
