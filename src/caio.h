@@ -14,9 +14,13 @@ void Yield();
 void RunIOLoop();
 
 ssize_t Read(int fd, void *buf, size_t count);
+ssize_t ReadFully(int fd, void *buf, size_t count);
 ssize_t Write(int fd, const void *buf, size_t count);
+ssize_t WriteFully(int fd, const void *buf, size_t count);
 ssize_t Recv(int fd, void *buf, size_t len, int flags);
+ssize_t RecvFully(int fd, void *buf, size_t len, int flags);
 ssize_t Send(int fd, const void *buf, size_t len, int flags);
+ssize_t SendFully(int fd, const void *buf, size_t len, int flags);
 int Socket(int domain, int type, int protocol);
 int Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
 int Bind(int fd, const struct sockaddr *addr, socklen_t addrlen);
@@ -36,9 +40,13 @@ void CAIO_Yield();
 void CAIO_RunIOLoop();
 
 ssize_t CAIO_Read(int fd, void* buf, size_t count);
+ssize_t CAIO_ReadFully(int fd, void* buf, size_t count);
 ssize_t CAIO_Write(int fd, const void* buf, size_t count);
+ssize_t CAIO_WriteFully(int fd, const void* buf, size_t count);
 ssize_t CAIO_Recv(int fd, void *buf, size_t len, int flags);
+ssize_t CAIO_RecvFully(int fd, void *buf, size_t len, int flags);
 ssize_t CAIO_Send(int fd, const void *buf, size_t len, int flags);
+ssize_t CAIO_SendFully(int fd, const void *buf, size_t len, int flags);
 int CAIO_Socket(int domain, int type, int protocol);
 int CAIO_Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
 int CAIO_Bind(int fd, const struct sockaddr *addr, socklen_t addrlen);

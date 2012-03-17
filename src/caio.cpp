@@ -37,21 +37,36 @@ void RunIOLoop() {
 
 ssize_t Read(int fd, void* buf, size_t count) {
   uint8_t *data = static_cast<uint8_t*>(buf);
-  ssize_t added = 0;
-
-  size_t received = added;
+  ssize_t received = 0;
 
   do {
-    added = ::read(fd, data+received, count-received);
-    if (added > 0) {
-      received += added;
-    } else if (added == 0) {
+    received = ::read(fd, data, count);
+    if (received >= 0) {
       return received;
-    } else if (added == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
+    } else if (received == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
       Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
       Yield();
+    }
+  } while (true);
+}
+
+ssize_t ReadFully(int fd, void* buf, size_t count) {
+  uint8_t *data = static_cast<uint8_t*>(buf);
+  size_t received = 0;
+  ssize_t partial = 0;
+
+  do {
+    partial = Read(fd, data+received, count-received);
+    if (partial > 0) {
+      received += partial;
+    } else if (partial == 0) {
+      // No more data to read.
+      return received;
+    } else {
+      // An error happened.
+      return partial;
     }
   } while (received < count);
 
@@ -59,45 +74,73 @@ ssize_t Read(int fd, void* buf, size_t count) {
 }
 
 ssize_t Write(int fd, const void *buf, size_t count) {
-  const uint8_t *data = static_cast<const uint8_t*>(buf);
-  ssize_t wrote = 0;
-
-  size_t written = wrote;
+  ssize_t written = 0;
 
   do {
-    wrote = ::write(fd, data+written, count-written);
-    if (wrote > 0) {
-      written += wrote;
-    } else if (wrote == 0) {
+    written = ::write(fd, buf, count);
+    if (written >= 0) {
       return written;
-    } else if (wrote == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
+    } else if (written == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
       Event::WriteEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
       Yield();
     }
-  } while (written < count);
+  } while (true);
+}
 
-  return written;
+ssize_t WriteFully(int fd, void* buf, size_t count) {
+  uint8_t *data = static_cast<uint8_t*>(buf);
+  size_t sent = 0;
+  ssize_t partial = 0;
+
+  do {
+    partial = Write(fd, data+sent, count-sent);
+    if (partial > 0) {
+      sent += partial;
+    } else if (partial == 0) {
+      // No more data to read.
+      return sent;
+    } else {
+      // An error happened.
+      return partial;
+    }
+  } while (sent < count);
+
+  return sent;
 }
 
 ssize_t Recv(int fd, void *buf, size_t len, int flags) {
-  uint8_t *data = static_cast<uint8_t*>(buf);
   ssize_t added = 0;
 
-  size_t received = added;
-
   do {
-    added = ::recv(fd, data+received, len-received, flags);
-    if (added > 0) {
-      received += added;
-    } else if (added == 0) {
-      return received;
+    added = ::recv(fd, buf, len, flags);
+    if (added >= 0) {
+      return added;
     } else if (added == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
       Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
       Yield();
+    }
+  } while (true);
+}
+
+ssize_t RecvFully(int fd, void *buf, size_t len, int flags) {
+  uint8_t *data = static_cast<uint8_t*>(buf);
+  size_t received = 0;
+  ssize_t partial = 0;
+
+  do {
+    partial = Recv(fd, data+received, len-received, flags);
+    if (partial > 0) {
+      received += partial;
+    } else if (partial == 0) {
+      // No more data to read.
+      return received;
+    } else {
+      // An error happened.
+      return partial;
     }
   } while (received < len);
 
@@ -105,26 +148,40 @@ ssize_t Recv(int fd, void *buf, size_t len, int flags) {
 }
 
 ssize_t Send(int fd, const void* buf, size_t len, int flags) {
-  const uint8_t *data = static_cast<const uint8_t*>(buf);
   ssize_t wrote = 0;
 
-  size_t written = wrote;
-
   do {
-    wrote = ::send(fd, data+written, len-written, flags);
-    if (wrote > 0) {
-      written += wrote;
-    } else if (wrote == 0) {
-      return written;
+    wrote = ::send(fd, buf, len, flags);
+    if (wrote >= 0) {
+      return wrote;
     } else if (wrote == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
     } else {
       Event::WriteEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
       Yield();
     }
-  } while (written < len);
+  } while (true);
+}
 
-  return written;
+ssize_t SendFully(int fd, const void* buf, size_t len, int flags) {
+  const uint8_t *data = static_cast<const uint8_t*>(buf);
+  size_t sent = 0;
+  ssize_t partial = 0;
+
+  do {
+    partial = Send(fd, data+sent, len-sent, flags);
+    if (partial > 0) {
+      sent += partial;
+    } else if (partial == 0) {
+      // No more data to read.
+      return sent;
+    } else {
+      // An error happened.
+      return partial;
+    }
+  } while (sent < len);
+
+  return sent;
 }
 
 int Socket(int domain, int type, int protocol) {
@@ -183,16 +240,32 @@ ssize_t CAIO_Read(int fd, void* buf, size_t count) {
   return CAIO::Read(fd, buf, count);
 }
 
+ssize_t CAIO_ReadFully(int fd, void* buf, size_t count) {
+  return CAIO::ReadFully(fd, buf, count);
+}
+
 ssize_t CAIO_Write(int fd, const void *buf, size_t count) {
   return CAIO::Write(fd, buf, count);
+}
+
+ssize_t CAIO_WriteFully(int fd, const void *buf, size_t count) {
+  return CAIO::WriteFully(fd, buf, count);
 }
 
 ssize_t CAIO_Recv(int fd, void *buf, size_t len, int flags) {
   return CAIO::Recv(fd, buf, len, flags);
 }
 
+ssize_t CAIO_RecvFully(int fd, void *buf, size_t len, int flags) {
+  return CAIO::RecvFully(fd, buf, len, flags);
+}
+
 ssize_t CAIO_Send(int fd, const void *buf, size_t len, int flags) {
   return CAIO::Send(fd, buf, len, flags);
+}
+
+ssize_t CAIO_SendFully(int fd, const void *buf, size_t len, int flags) {
+  return CAIO::SendFully(fd, buf, len, flags);
 }
 
 int CAIO_Socket(int domain, int type, int protocol) {
@@ -203,15 +276,15 @@ int CAIO_Connect(int fd, const struct sockaddr *addr, socklen_t addrlen) {
   return CAIO::Connect(fd, addr, addrlen);
 }
 
-int Bind(int fd, const struct sockaddr *addr, socklen_t addrlen) {
+int CAIO_Bind(int fd, const struct sockaddr *addr, socklen_t addrlen) {
   return CAIO::Bind(fd, addr, addrlen);
 }
 
-int Listen(int fd, int backlog) {
+int CAIO_Listen(int fd, int backlog) {
   return CAIO::Listen(fd, backlog);
 }
 
-int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
+int CAIO_Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
   return CAIO::Accept(fd, addr, addrlen);
 }
 
