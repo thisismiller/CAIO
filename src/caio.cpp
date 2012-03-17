@@ -24,7 +24,7 @@ namespace CAIO {
 void Spawn(std::function<void()> func) {
   Coroutine::SetScheduler(Coroutine::Main());
   Coroutine *coro = new Coroutine(bind(DeleteMeAtExit, func)); 
-  coro->run();
+  Event::RunOnce(bind(&Coroutine::run, coro));
 }
 
 void Yield() {
