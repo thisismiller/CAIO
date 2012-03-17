@@ -2,6 +2,7 @@
 #define _LIBCAIO_CAIO_HPP_
 
 #include <unistd.h>
+#include <sys/socket.h>
 
 #ifdef __cplusplus
 #include <functional>
@@ -14,6 +15,11 @@ void RunIOLoop();
 
 ssize_t Read(int fd, void *buf, size_t count);
 ssize_t Write(int fd, const void *buf, size_t count);
+ssize_t Recv(int fd, void *buf, size_t len, int flags);
+ssize_t Send(int fd, const void *buf, size_t len, int flags);
+int Socket(int domain, int type, int protocol);
+int Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int Close(int fd);
 
 }
 #endif
@@ -28,6 +34,11 @@ void CAIO_RunIOLoop();
 
 ssize_t CAIO_Read(int fd, void* buf, size_t count);
 ssize_t CAIO_Write(int fd, const void* buf, size_t count);
+ssize_t CAIO_Recv(int fd, void *buf, size_t len, int flags);
+ssize_t CAIO_Send(int fd, const void *buf, size_t len, int flags);
+int CAIO_Socket(int domain, int type, int protocol);
+int CAIO_Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int CAIO_Close(int fd);
 
 #ifdef __cplusplus
 }
