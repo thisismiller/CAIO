@@ -19,6 +19,9 @@ ssize_t Recv(int fd, void *buf, size_t len, int flags);
 ssize_t Send(int fd, const void *buf, size_t len, int flags);
 int Socket(int domain, int type, int protocol);
 int Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int Bind(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int Listen(int fd, int backlog);
+int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen);
 int Close(int fd);
 
 }
@@ -38,6 +41,9 @@ ssize_t CAIO_Recv(int fd, void *buf, size_t len, int flags);
 ssize_t CAIO_Send(int fd, const void *buf, size_t len, int flags);
 int CAIO_Socket(int domain, int type, int protocol);
 int CAIO_Connect(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int CAIO_Bind(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int CAIO_Listen(int fd, int backlog);
+int CAIO_Accept(int fd, struct sockaddr *addr, socklen_t *addrlen);
 int CAIO_Close(int fd);
 
 #ifdef __cplusplus

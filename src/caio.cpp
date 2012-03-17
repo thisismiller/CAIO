@@ -137,6 +137,30 @@ int Connect(int fd, const struct sockaddr *addr, socklen_t addrlen) {
   return ::connect(fd, addr, addrlen);
 }
 
+int Bind(int fd, const struct sockaddr *addr, socklen_t addrlen) {
+  return ::bind(fd, addr, addrlen);
+}
+
+int Listen(int fd, int backlog) {
+  return ::listen(fd, backlog);
+}
+
+int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
+  int sock;
+
+  while (true) {
+    sock = ::accept(fd, addr, addrlen);
+    if (sock > 0) {
+      return sock;
+    } else if (sock == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
+      return -1;
+    } else {
+      Event::ReadEvent event(fd, bind(&Coroutine::run, Coroutine::Running()));
+      Yield();
+    }
+  }
+}
+
 int Close(int fd) {
   return ::close(fd);
 }
@@ -177,6 +201,18 @@ int CAIO_Socket(int domain, int type, int protocol) {
 
 int CAIO_Connect(int fd, const struct sockaddr *addr, socklen_t addrlen) {
   return CAIO::Connect(fd, addr, addrlen);
+}
+
+int Bind(int fd, const struct sockaddr *addr, socklen_t addrlen) {
+  return CAIO::Bind(fd, addr, addrlen);
+}
+
+int Listen(int fd, int backlog) {
+  return CAIO::Listen(fd, backlog);
+}
+
+int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
+  return CAIO::Accept(fd, addr, addrlen);
 }
 
 int CAIO_Close(int fd) {
