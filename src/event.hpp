@@ -50,7 +50,7 @@ private:
 
 class RunOnceEvent {
 public:
-  RunOnceEvent(std::function<void()> func) : callback(func) {
+  explicit RunOnceEvent(std::function<void()> func) : callback(func) {
     event.set<RunOnceEvent, &RunOnceEvent::trampoline>(const_cast<RunOnceEvent*>(this));
     event.start();
   }
