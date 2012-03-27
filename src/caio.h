@@ -12,6 +12,7 @@ namespace CAIO {
 void Spawn(std::function<void()> func);
 void Yield();
 void RunIOLoop();
+void SetStackSize(size_t size);
 
 ssize_t Read(int fd, void *buf, size_t count);
 ssize_t ReadFully(int fd, void *buf, size_t count);
@@ -38,6 +39,7 @@ extern "C" {
 void CAIO_Spawn(void (*func)(void*), void* context);
 void CAIO_Yield();
 void CAIO_RunIOLoop();
+void CAIO_SetStackSize(size_t size);
 
 ssize_t CAIO_Read(int fd, void* buf, size_t count);
 ssize_t CAIO_ReadFully(int fd, void* buf, size_t count);

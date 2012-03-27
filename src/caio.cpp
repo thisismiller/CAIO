@@ -12,9 +12,13 @@
 #include <fcntl.h>
 
 namespace {
+void DeleteCoroutine(Coroutine *coro) {
+  delete coro;
+}
+
 void DeleteMeAtExit(std::function<void()> func) {
   func();
-  delete &Coroutine::Running();
+  Event::RunOnce(bind(DeleteCoroutine, &Coroutine::Running()));
   CAIO::Yield();
 }
 }
@@ -33,6 +37,10 @@ void Yield() {
 
 void RunIOLoop() {
   ev::get_default_loop().run();
+}
+
+void SetStackSize(size_t size) {
+  Coroutine::SetDefaultStackSize(size);
 }
 
 ssize_t Read(int fd, void* buf, size_t count) {
@@ -234,6 +242,10 @@ void CAIO_Yield() {
 
 void CAIO_RunIOLoop() {
   CAIO::RunIOLoop();
+}
+
+void CAIO_SetStackSize(size_t size) {
+  return CAIO::SetStackSize(size);
 }
 
 ssize_t CAIO_Read(int fd, void* buf, size_t count) {
