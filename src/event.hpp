@@ -30,6 +30,29 @@ private:
   std::function<void()> callback;
 };
 
+class AcceptEvent {
+public:
+  AcceptEvent(int fd, const std::function<void()> &cb) : callback(cb){
+    struct ev_loop *loop = EV_DEFAULT;
+    ev_io_init(&event, &AcceptEvent::trampoline, fd, EV_READ);
+    ev_set_priority(&event, 1); // Higher priority than normal
+    ev_io_start(EV_A_ &event);
+  }
+
+  ~AcceptEvent() {
+    struct ev_loop *loop = EV_DEFAULT;
+    ev_io_stop(EV_A_ &event);
+  }
+
+private:
+  static void trampoline(EV_P_ ev_io *w, int revents) {
+    reinterpret_cast<AcceptEvent*>(w)->callback();
+  }
+
+  ev_io event;
+  std::function<void()> callback;
+};
+
 class WriteEvent {
 public:
   WriteEvent(int fd, const std::function<void()> &cb) : callback(cb){
