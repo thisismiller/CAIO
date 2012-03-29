@@ -97,8 +97,8 @@ ssize_t Write(int fd, const void *buf, size_t count) {
   } while (true);
 }
 
-ssize_t WriteFully(int fd, void* buf, size_t count) {
-  uint8_t *data = static_cast<uint8_t*>(buf);
+ssize_t WriteFully(int fd, const void* buf, size_t count) {
+  const uint8_t *data = static_cast<const uint8_t*>(buf);
   size_t sent = 0;
   ssize_t partial = 0;
 
