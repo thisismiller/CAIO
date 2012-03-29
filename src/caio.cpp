@@ -216,6 +216,7 @@ int Accept(int fd, struct sockaddr *addr, socklen_t *addrlen) {
   while (true) {
     sock = ::accept(fd, addr, addrlen);
     if (sock > 0) {
+      fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
       return sock;
     } else if (sock == -1 && errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
       return -1;
