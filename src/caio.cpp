@@ -36,7 +36,7 @@ void Yield() {
 }
 
 void RunIOLoop() {
-  ev::get_default_loop().run();
+  Event::RunLoop();
 }
 
 void SetStackSize(size_t size) {
